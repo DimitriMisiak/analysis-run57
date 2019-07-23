@@ -38,6 +38,29 @@ def ion_chi2_cut(num, chi2_thresh=300):
     
     return ind_chi2_cut, cond
 
+def ion_chi2_cut_noise(num, chi2_thresh=300):
+    """ Return the indexes of the events passing the chi2 cut on the heat
+    channel for the given partition.  
+    Also return the truth array.
+    """
+    fp = file_path(num) 
+    root = uproot.open(fp)
+ 
+    tree = root["EventTree_noise_Normal_filt_decor"]
+    
+    chi2_of = tree['chi2_OF_t0'].array()
+    chi2_ion = chi2_of[:, 2:].T #keeping only ion channel
+    
+    chi2_cut_cond = chi2_ion<chi2_thresh
+
+    cond = chi2_cut_cond[0]
+    for cond_aux in chi2_cut_cond[1:]:
+        cond = np.logical_and(cond, cond_aux)
+
+    ind_chi2_cut = np.nonzero(cond)[0]
+    
+    return ind_chi2_cut, cond
+
 if __name__ == '__main__':
     
     ion_label = ('A', 'B', 'C', 'D')

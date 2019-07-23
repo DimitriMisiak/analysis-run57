@@ -14,17 +14,17 @@ import matplotlib.pyplot as plt
 
 from read_data import file_path
 
-from heat_chi2_cut import heat_chi2_cut
-from ion_chi2_cut import ion_chi2_cut
-from ion_offset_cut import ion_offset_cut
+from heat_chi2_cut import heat_chi2_cut_noise
+from ion_chi2_cut import ion_chi2_cut_noise
+from ion_offset_cut import ion_offset_cut_noise
 
-def full_cut(num):
+def full_cut_noise(num):
     """ Return the indexes of the events passing the chi2 cut on the heat
     channel for the given partition.    
     """
-    _, cond_heat_chi2_cut = heat_chi2_cut(num)
-    _, cond_ion_chi2_cut = ion_chi2_cut(num)
-    _, cond_ion_off_cut = ion_offset_cut(num)
+    _, cond_heat_chi2_cut = heat_chi2_cut_noise(num)
+    _, cond_ion_chi2_cut = ion_chi2_cut_noise(num)
+    _, cond_ion_off_cut = ion_offset_cut_noise(num)
     
     cond_full = cond_heat_chi2_cut
     for condi in (cond_ion_chi2_cut, cond_ion_off_cut):

@@ -14,6 +14,10 @@ import matplotlib.pyplot as plt
 
 from read_data import file_path
 
+def fun_cut(e):
+    cut = 300*np.ones(e.shape)# + (e/100)**2
+    return cut
+
 
 def heat_chi2_cut(num, chi2_thresh=300):
     """ Return the indexes of the events passing the chi2 cut on the heat
@@ -25,14 +29,45 @@ def heat_chi2_cut(num, chi2_thresh=300):
  
     tree = root["EventTree_trig_Normal_filt_decor"]
     
+    energy_of = tree['Energy_OF'].array()
+    energy_chal = energy_of[:, 0].T #keeping ony chalA
+    
     chi2_of = tree['chi2_OF'].array()
     chi2_chal = chi2_of[:, 0].T #keeping only chalA
     
-    chi2_cut_cond = chi2_chal<chi2_thresh
+    thresh_array = fun_cut(energy_chal)
+    
+    chi2_cut_cond = chi2_chal < thresh_array
 
     ind_chi2_cut = np.nonzero(chi2_cut_cond)[0]
     
     return ind_chi2_cut, chi2_cut_cond
+
+
+def heat_chi2_cut_noise(num, chi2_thresh=300):
+    """ Return the indexes of the events passing the chi2 cut on the heat
+    channel for the given partition.    
+    Also return the truth array.
+    """
+    fp = file_path(num) 
+    root = uproot.open(fp)
+ 
+    tree = root["EventTree_noise_Normal_filt_decor"]
+    
+    energy_of = tree['Energy_OF_t0'].array()
+    energy_chal = energy_of[:, 0].T #keeping ony chalA
+    
+    chi2_of = tree['chi2_OF_t0'].array()
+    chi2_chal = chi2_of[:, 0].T #keeping only chalA
+    
+    thresh_array = fun_cut(energy_chal)
+    
+    chi2_cut_cond = chi2_chal < thresh_array
+
+    ind_chi2_cut = np.nonzero(chi2_cut_cond)[0]
+    
+    return ind_chi2_cut, chi2_cut_cond
+
 
 
 if __name__ == '__main__':
@@ -104,7 +139,11 @@ if __name__ == '__main__':
     ax.loglog(energy_cut_chal, chi2_cut_chal, ls='none', marker='+', color='b')
     
     ax.grid(True)
-    ax.axhline(chi2_thresh, color='k')
+#    ax.axhline(chi2_thresh, color='k')
+    
+    e_array = 10**np.linspace(1, 5, 100)
+    cut_array = fun_cut(e_array)
+    ax.plot(e_array, cut_array, color='k')
     
     fig.tight_layout()
     

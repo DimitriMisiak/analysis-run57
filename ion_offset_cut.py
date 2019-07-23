@@ -38,11 +38,34 @@ def ion_offset_cut(num, off_thresh=14000):
     
     return ind_chi2_cut, cond
 
+def ion_offset_cut_noise(num, off_thresh=14000):
+    """ Return the indexes of the events passing the chi2 cut on the heat
+    channel for the given partition.    
+    Also return the truth array.
+    """
+    fp = file_path(num) 
+    root = uproot.open(fp)
+ 
+    tree = root["EventTree_noise_Normal_filt_decor"]
+    
+    offset = tree['Off'].array()
+    offset_ion = offset[:, 2:].T #keeping only ion channel
+    
+    offset_cut_cond = np.abs(offset_ion)<off_thresh
+
+    cond = offset_cut_cond[0]
+    for cond_aux in offset_cut_cond[1:]:
+        cond = np.logical_and(cond, cond_aux)
+
+    ind_chi2_cut = np.nonzero(cond)[0]
+    
+    return ind_chi2_cut, cond
+
 
 if __name__ == '__main__':
     
     ion_label = ('A', 'B', 'C', 'D')
-    chi2_thresh = 300
+    off_thresh = 14000
     num_array = np.arange(3)
     
     energy_of = list()
@@ -65,7 +88,7 @@ if __name__ == '__main__':
         energy_of.append(energy_array)
         chi2_of.append(chi2_array)
     
-        cut_ind, _ = ion_offset_cut(num, chi2_thresh)
+        cut_ind, _ = ion_offset_cut(num, off_thresh)
         heat_cut.append(cut_ind)
         energy_of_cut.append(energy_array[cut_ind])
         chi2_of_cut.append(chi2_array[cut_ind])
