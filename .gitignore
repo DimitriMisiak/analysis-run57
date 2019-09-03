@@ -5,3 +5,4 @@
 
 # ignoring the output folder (for test producing heavy files)
 output/
+output_old/
