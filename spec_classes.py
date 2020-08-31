@@ -7,8 +7,8 @@
 """
 import numpy as np
 
-from core_classes import Analysis, Artifact
-from model_spectrum import fid_mixture, double_norm
+from .core_classes import Analysis, Artifact
+from .model_spectrum import fid_mixture, double_norm
 
 
 class Analysis_red(Analysis):

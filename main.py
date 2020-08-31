@@ -24,7 +24,7 @@ plt.close('all')
 plt.rcParams['text.usetex']=True
 style = [pe.Normal(), pe.withStroke(foreground='k', linewidth=3)]
 
-run = 'tg25l019'
+run = 'tg31l003'
 #ana = Analysis_red(run, detector='RED80')
 
 ana = Analysis_red(run, detector='RED70',
